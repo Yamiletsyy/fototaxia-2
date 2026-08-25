@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Fototaxia iPad</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+
+    #pantalla {
+      width: 100%;
+      height: 100%;
+      background: #cccccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #zonaLuz {
+      position: fixed;
+      display: none;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 45px 20px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    h1 {
+      font-size: 40px;
+    }
+
+    p {
+      font-size: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="pantalla">
+    <h1>TOCA PARA INICIAR</h1>
+    <p>Protocolo de fototaxia</p>
+  </div>
+
+  <div id="zonaLuz"></div>
+
+  <script>
+    let iniciado = false;
+
+    const duracionLuz = 30 * 1000; // 1 minuto
+    const esperaMinima = 1 * 1000; // 15 segundos
+    const esperaMaxima = 3 * 1000; // 60 segundos
+
+    document.addEventListener("touchstart", iniciar, { once: true });
+    document.addEventListener("click", iniciar, { once: true });
+
+    function iniciar() {
+      if (iniciado) return;
+
+      iniciado = true;
+      document.getElementById("pantalla").style.display = "none";
+
+      mostrarLuzAleatoria();
+    }
+
+    function mostrarLuzAleatoria() {
+      const luz = document.getElementById("zonaLuz");
+
+      // Diámetro aleatorio: entre 15% y 40% del lado menor de la pantalla
+      const ladoMenor = Math.min(window.innerWidth, window.innerHeight);
+      const diametro = ladoMenor * (0.05 + Math.random() * 0.08);
+
+      // Posición aleatoria, manteniendo el círculo dentro de la pantalla
+      const izquierda = Math.random() * (window.innerWidth - diametro);
+      const arriba = Math.random() * (window.innerHeight - diametro);
+
+      luz.style.width = diametro + "px";
+      luz.style.height = diametro + "px";
+      luz.style.left = izquierda + "px";
+      luz.style.top = arriba + "px";
+      luz.style.display = "block";
+
+      // La luz permanece encendida durante un minuto
+      setTimeout(() => {
+        luz.style.display = "none";
+
+        // Espera aleatoria antes de la siguiente luz
+        const espera =
+          esperaMinima + Math.random() * (esperaMaxima - esperaMinima);
+
+        setTimeout(mostrarLuzAleatoria, espera);
+      }, duracionLuz);
+    }
+  </script>
+</body>
+</html>
